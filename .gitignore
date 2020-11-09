@@ -1,0 +1,7 @@
+.*
+!.gitignore
+/mnt/*
+*.img
+*.gz
+*.xz
+*.zip
