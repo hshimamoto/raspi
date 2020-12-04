@@ -1,7 +1,7 @@
 #!/bin/bash
 
 if [ $# -lt 2 ]; then
-	echo "setup.sh <hostname> <template> <arch> [config]"
+	echo "setup.sh <hostname> <template> <arch> [base] [config]"
 	exit 1
 fi
 
@@ -24,6 +24,14 @@ case "$RPI_Arch" in
 	*)
 		echo "unknown arch $RPI_Arch"
 		exit 1
+esac
+
+RPI_Base=-lite
+case "$RPI_ExtraConfig" in
+	desktop)
+		RPI_Base=
+		RPI_ExtraConfig=$5
+		;;
 esac
 
 # generate config
@@ -59,7 +67,7 @@ if [ -x $RPI_TemplateDir/precheck.sh ]; then
 	fi
 fi
 
-RPIOS=2020-08-20-raspios-buster-$RPI_Arch-lite
+RPIOS=2020-08-20-raspios-buster-$RPI_Arch$RPI_Base
 RPIOS_ZIP=images/$RPIOS.zip
 RPIOS_IMG=$RPIOS.img
 
@@ -81,7 +89,7 @@ if [ ! -e $RPIOS_IMG ]; then
 	exit 1
 fi
 
-RPI_Image=$RPI_Stamp-$RPI_Host-raspios-buster-$RPI_Arch-lite-$RPI_Template.img
+RPI_Image=$RPI_Stamp-$RPI_Host-raspios-buster-$RPI_Arch$RPI_Base-$RPI_Template.img
 mv $RPIOS_IMG $RPI_Image
 
 echo "Increase image size $(date)"
