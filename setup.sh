@@ -60,7 +60,7 @@ if [ -x $RPI_TemplateDir/precheck.sh ]; then
 fi
 
 RPIOS=2020-08-20-raspios-buster-$RPI_Arch-lite
-RPIOS_ZIP=$RPIOS.zip
+RPIOS_ZIP=images/$RPIOS.zip
 RPIOS_IMG=$RPIOS.img
 
 echo "START $(date)"
