@@ -1,7 +1,7 @@
 #!/bin/bash
 
 if [ $# -lt 2 ]; then
-	echo "setup.sh <hostname> <template> [config]"
+	echo "setup.sh <hostname> <template> <arch> [config]"
 	exit 1
 fi
 
@@ -14,8 +14,17 @@ function cleanup {
 RPI_Stamp=$(date +%Y%m%d)
 RPI_Host=$1
 RPI_Template=$2
-RPI_ExtraConfig=$3
+RPI_Arch=$3
+RPI_ExtraConfig=$4
 RPI_Config=$RPI_Host.config
+
+case "$RPI_Arch" in
+	armhf|arm64)
+		;;
+	*)
+		echo "unknown arch $RPI_Arch"
+		exit 1
+esac
 
 # generate config
 if [ -e $RPI_Config ]; then
@@ -50,7 +59,7 @@ if [ -x $RPI_TemplateDir/precheck.sh ]; then
 	fi
 fi
 
-RPIOS=2020-08-20-raspios-buster-armhf-lite
+RPIOS=2020-08-20-raspios-buster-$RPI_Arch-lite
 RPIOS_ZIP=$RPIOS.zip
 RPIOS_IMG=$RPIOS.img
 
@@ -72,7 +81,7 @@ if [ ! -e $RPIOS_IMG ]; then
 	exit 1
 fi
 
-RPI_Image=$RPI_Stamp-$RPI_Host-raspios-buster-armhf-lite-$RPI_Template.img
+RPI_Image=$RPI_Stamp-$RPI_Host-raspios-buster-$RPI_Arch-lite-$RPI_Template.img
 mv $RPIOS_IMG $RPI_Image
 
 echo "Increase image size $(date)"
@@ -80,6 +89,6 @@ echo "Increase image size $(date)"
 echo "Resize image size $(date)"
 sudo ./raspi_resize2fs.sh $RPI_Image
 echo "Start setup with CHROOT $(date)"
-sudo ./raspi_setup.sh $RPI_Image $RPI_Host $RPI_TemplateDir
+sudo ./raspi_setup.sh $RPI_Image $RPI_Host $RPI_TemplateDir $RPI_Arch
 
 echo "END $(date)"

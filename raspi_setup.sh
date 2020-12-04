@@ -5,6 +5,7 @@ set -e
 IMG=$1
 NAME=$2
 TEMPLATE=$3
+ARCH=$4
 
 LOOP=$(losetup -Pf ${IMG} --show)
 trap cleanup EXIT
@@ -45,10 +46,17 @@ function cleanup {
 	losetup -d ${LOOP}
 }
 
-sed -i 's/^/#CHROOT /g' mnt/etc/ld.so.preload
+FLAG_LD_SO_PRELOAD=0
+if [ -e mnt/etc/ld.so.preload ]; then
+	sed -i 's/^/#CHROOT /g' mnt/etc/ld.so.preload
+	FLAG_LD_SO_PRELOAD=1
+fi
+
 function cleanup {
 	echo 'cleanup 5'
-	sed -i 's/#CHROOT //g' mnt/etc/ld.so.preload
+	if [ $FLAG_LD_SO_PRELOAD -ne 0 ]; then
+		sed -i 's/#CHROOT //g' mnt/etc/ld.so.preload
+	fi
 	rm mnt/usr/bin/qemu-arm-static
 	umount mnt/{proc,sys,dev/pts,dev,etc/resolv.conf}
 	umount mnt/boot
@@ -60,7 +68,9 @@ mkdir -p mnt/template mnt/common
 function cleanup {
 	echo 'cleanup 6'
 	rmdir mnt/template mnt/common
-	sed -i 's/#CHROOT //g' mnt/etc/ld.so.preload
+	if [ $FLAG_LD_SO_PRELOAD -ne 0 ]; then
+		sed -i 's/#CHROOT //g' mnt/etc/ld.so.preload
+	fi
 	rm mnt/usr/bin/qemu-arm-static
 	umount mnt/{proc,sys,dev/pts,dev,etc/resolv.conf}
 	umount mnt/boot
@@ -73,7 +83,9 @@ function cleanup {
 	echo 'cleanup 7'
 	umount mnt/template
 	rmdir mnt/template mnt/common
-	sed -i 's/#CHROOT //g' mnt/etc/ld.so.preload
+	if [ $FLAG_LD_SO_PRELOAD -ne 0 ]; then
+		sed -i 's/#CHROOT //g' mnt/etc/ld.so.preload
+	fi
 	rm mnt/usr/bin/qemu-arm-static
 	umount mnt/{proc,sys,dev/pts,dev,etc/resolv.conf}
 	umount mnt/boot
@@ -87,7 +99,9 @@ function cleanup {
 	umount mnt/common
 	umount mnt/template
 	rmdir mnt/template mnt/common
-	sed -i 's/#CHROOT //g' mnt/etc/ld.so.preload
+	if [ $FLAG_LD_SO_PRELOAD -ne 0 ]; then
+		sed -i 's/#CHROOT //g' mnt/etc/ld.so.preload
+	fi
 	rm mnt/usr/bin/qemu-arm-static
 	umount mnt/{proc,sys,dev/pts,dev,etc/resolv.conf}
 	umount mnt/boot
@@ -105,7 +119,9 @@ if [ -e $NAME.config ]; then
 		umount mnt/common
 		umount mnt/template
 		rmdir mnt/template mnt/common
-		sed -i 's/#CHROOT //g' mnt/etc/ld.so.preload
+		if [ $FLAG_LD_SO_PRELOAD -ne 0 ]; then
+			sed -i 's/#CHROOT //g' mnt/etc/ld.so.preload
+		fi
 		rm mnt/usr/bin/qemu-arm-static
 		umount mnt/{proc,sys,dev/pts,dev,etc/resolv.conf}
 		umount mnt/boot
