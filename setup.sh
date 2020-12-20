@@ -117,6 +117,6 @@ else
 fi
 
 echo "Start setup with CHROOT $(date)"
-sudo ./raspi_setup.sh $RPI_Image $RPI_Host $RPI_TemplateDir $RPI_Arch
+sudo ./raspi_setup.sh $RPI_Image $RPI_Host $RPI_TemplateDir
 
 echo "END $(date)"

@@ -5,7 +5,6 @@ set -e
 IMG=$1
 NAME=$2
 TEMPLATE=$3
-ARCH=$4
 
 LOOP=$(losetup -Pf ${IMG} --show)
 trap cleanup EXIT
