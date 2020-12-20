@@ -1,7 +1,7 @@
 #!/bin/bash
 
 if [ $# -lt 2 ]; then
-	echo "setup.sh <hostname> <template> <arch> [base] [config]"
+	echo "setup.sh <hostname> <template> <arch> [base] [config] [extra]"
 	exit 1
 fi
 
@@ -16,6 +16,7 @@ RPI_Host=$1
 RPI_Template=$2
 RPI_Arch=$3
 RPI_ExtraConfig=$4
+RPI_ExtraDir=$5
 RPI_Config=$RPI_Host.config
 
 case "$RPI_Arch" in
@@ -33,6 +34,13 @@ case "$RPI_ExtraConfig" in
 		RPI_ExtraConfig=$5
 		;;
 esac
+
+if [ -d "$RPI_ExtraConfig" ]; then
+	#swap
+	RPI_ExtraConfig_tmp=$RPI_ExtraDir
+	RPI_ExtraDir=$RPI_ExtraConfig
+	RPI_ExtraConfig=$RPI_ExtraConfig_tmp
+fi
 
 # generate config
 if [ -e $RPI_Config ]; then
@@ -117,6 +125,6 @@ else
 fi
 
 echo "Start setup with CHROOT $(date)"
-sudo ./raspi_setup.sh $RPI_Image $RPI_Host $RPI_TemplateDir
+sudo ./raspi_setup.sh $RPI_Image $RPI_Host $RPI_TemplateDir $RPI_ExtraDir
 
 echo "END $(date)"

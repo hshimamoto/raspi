@@ -5,6 +5,10 @@ set -e
 IMG=$1
 NAME=$2
 TEMPLATE=$3
+EXTRA=$4
+if [ "$EXTRA" == "" ]; then
+	EXTRA=/dev/null
+fi
 
 LOOP=$(losetup -Pf ${IMG} --show)
 trap cleanup EXIT
@@ -63,10 +67,10 @@ function cleanup {
 	losetup -d ${LOOP}
 }
 
-mkdir -p mnt/template mnt/common
+mkdir -p mnt/template mnt/common mnt/extra
 function cleanup {
 	echo 'cleanup 6'
-	rmdir mnt/template mnt/common
+	rmdir mnt/template mnt/common mnt/extra
 	if [ $FLAG_LD_SO_PRELOAD -ne 0 ]; then
 		sed -i 's/#CHROOT //g' mnt/etc/ld.so.preload
 	fi
@@ -81,7 +85,7 @@ mount -o bind,ro ${TEMPLATE} mnt/template
 function cleanup {
 	echo 'cleanup 7'
 	umount mnt/template
-	rmdir mnt/template mnt/common
+	rmdir mnt/template mnt/common mnt/extra
 	if [ $FLAG_LD_SO_PRELOAD -ne 0 ]; then
 		sed -i 's/#CHROOT //g' mnt/etc/ld.so.preload
 	fi
@@ -97,7 +101,7 @@ function cleanup {
 	echo 'cleanup 8'
 	umount mnt/common
 	umount mnt/template
-	rmdir mnt/template mnt/common
+	rmdir mnt/template mnt/common mnt/extra
 	if [ $FLAG_LD_SO_PRELOAD -ne 0 ]; then
 		sed -i 's/#CHROOT //g' mnt/etc/ld.so.preload
 	fi
@@ -117,7 +121,28 @@ if [ -e $NAME.config ]; then
 		rm -f mnt/config
 		umount mnt/common
 		umount mnt/template
-		rmdir mnt/template mnt/common
+		rmdir mnt/template mnt/common mnt/extra
+		if [ $FLAG_LD_SO_PRELOAD -ne 0 ]; then
+			sed -i 's/#CHROOT //g' mnt/etc/ld.so.preload
+		fi
+		rm mnt/usr/bin/qemu-arm-static
+		umount mnt/{proc,sys,dev/pts,dev,etc/resolv.conf}
+		umount mnt/boot
+		umount mnt
+		losetup -d ${LOOP}
+	}
+fi
+
+if [ -d $EXTRA ]; then
+	mount -o bind,ro ${EXTRA} mnt/extra
+	function cleanup {
+		echo 'cleanup 10'
+		umount mnt/extra
+		umount mnt/config
+		rm -f mnt/config
+		umount mnt/common
+		umount mnt/template
+		rmdir mnt/template mnt/common mnt/extra
 		if [ $FLAG_LD_SO_PRELOAD -ne 0 ]; then
 			sed -i 's/#CHROOT //g' mnt/etc/ld.so.preload
 		fi
@@ -132,3 +157,7 @@ fi
 echo Chrooting
 
 chroot mnt /template/setup.sh
+# run extra setup
+if [ -e mnt/extra/setup.sh ]; then
+	chroot mnt /extra/setup.sh
+fi
