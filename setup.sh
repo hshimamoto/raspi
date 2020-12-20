@@ -75,6 +75,16 @@ fi
 RPIOS_ZIP=images/$RPIOS.zip
 RPIOS_IMG=$RPIOS.img
 
+# is there any cache?
+CACHE_IMG=""
+
+if [ -d caches ]; then
+	CACHE_IMG=`ls caches/*-raspios-buster-$RPI_Arch$RPI_Base.img | sort | tail -n 1`
+	if [ "$CACHE_IMG" != "" ]; then
+		echo "Use $CACHE_IMG"
+	fi
+fi
+
 echo "START $(date)"
 
 if [ -e $RPIOS_IMG ]; then
@@ -82,24 +92,30 @@ if [ -e $RPIOS_IMG ]; then
 	exit 1
 fi
 
-if [ ! -e $RPIOS_ZIP ]; then
-	echo "no $RPIOS_ZIP"
-	exit 1
-fi
-
-unzip $RPIOS_ZIP
-if [ ! -e $RPIOS_IMG ]; then
-	echo "no image found"
-	exit 1
-fi
-
 RPI_Image=$RPI_Stamp-$RPI_Host-raspios-buster-$RPI_Arch$RPI_Base-$RPI_Template.img
-mv $RPIOS_IMG $RPI_Image
 
-echo "Increase image size $(date)"
-./raspi_grow.sh $RPI_Image 200
-echo "Resize image size $(date)"
-sudo ./raspi_resize2fs.sh $RPI_Image
+if [ "$CACHE_IMG" == "" ]; then
+	if [ ! -e $RPIOS_ZIP ]; then
+		echo "no $RPIOS_ZIP"
+		exit 1
+	fi
+
+	unzip $RPIOS_ZIP
+	if [ ! -e $RPIOS_IMG ]; then
+		echo "no image found"
+		exit 1
+	fi
+	mv $RPIOS_IMG $RPI_Image
+
+	echo "Increase image size $(date)"
+	./raspi_grow.sh $RPI_Image 200
+	echo "Resize image size $(date)"
+	sudo ./raspi_resize2fs.sh $RPI_Image
+else
+	echo "copy $CACHE_IMG"
+	cp $CACHE_IMG $RPI_Image
+fi
+
 echo "Start setup with CHROOT $(date)"
 sudo ./raspi_setup.sh $RPI_Image $RPI_Host $RPI_TemplateDir $RPI_Arch
 
