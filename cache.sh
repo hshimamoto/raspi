@@ -5,12 +5,6 @@ if [ $# -lt 1 ]; then
 	exit 1
 fi
 
-# set cleanup
-trap cleanup EXIT
-function cleanup {
-	echo cleanup
-}
-
 RPI_Stamp=$(date +%Y%m%d)
 RPI_Arch=$1
 RPI_Extra=$2
@@ -24,42 +18,24 @@ case "$RPI_Arch" in
 esac
 
 RPI_Base=-lite
+RPI_BaseSuffix=-lite
 case "$RPI_Extra" in
 	desktop)
 		RPI_Base=
+		RPI_BaseSuffix=-desktop
 		;;
 esac
 
 RPI_TemplateDir=templates/cache
 
-if [ "$RPI_Arch" == "armhf" ]; then
-	RPIOS=2020-12-02-raspios-buster-$RPI_Arch$RPI_Base
-else
-	RPIOS=2020-08-20-raspios-buster-$RPI_Arch$RPI_Base
-fi
-RPIOS_ZIP=images/$RPIOS.zip
-RPIOS_IMG=$RPIOS.img
-
 echo "START $(date)"
 
-if [ -e $RPIOS_IMG ]; then
-	echo "there is previous work"
-	exit 1
-fi
-
-if [ ! -e $RPIOS_ZIP ]; then
-	echo "no $RPIOS_ZIP"
-	exit 1
-fi
-
-unzip $RPIOS_ZIP
-if [ ! -e $RPIOS_IMG ]; then
-	echo "no image found"
-	exit 1
-fi
-
 RPI_Image=$RPI_Stamp-raspios-buster-$RPI_Arch$RPI_Base.img
-mv $RPIOS_IMG $RPI_Image
+
+./extract.sh $RPI_Arch $RPI_BaseSuffix $RPI_Image
+if [ ! -e $RPI_Image ]; then
+	exit 1
+fi
 
 echo "Increase image size $(date)"
 ./raspi_grow.sh $RPI_Image 200
