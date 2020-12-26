@@ -20,7 +20,7 @@ export DEBIAN_FRONTEND=noninteractive
 /common/13_wifi.sh
 
 # install python
-apt-get install -y python3 python3-pip
+/common/30_pkg_install.sh python3 python3-pip
 
 /common/99_cleanup.sh
 
