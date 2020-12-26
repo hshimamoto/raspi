@@ -132,6 +132,14 @@ if [ -e $RPI_TemplateDir/imagesize ]; then
 	echo "Resize image size $(date)"
 	sudo ./raspi_resize2fs.sh $RPI_Image
 fi
+if [ -e $RPI_ExtraDir/imagesize ]; then
+	imagesize=$(cat $RPI_ExtraDir/imagesize)
+	echo "Need more space $imagesize"
+	echo "Increase image size $(date)"
+	./raspi_grow.sh $RPI_Image $imagesize
+	echo "Resize image size $(date)"
+	sudo ./raspi_resize2fs.sh $RPI_Image
+fi
 
 echo "Start setup with CHROOT $(date)"
 sudo ./raspi_setup.sh $RPI_Image $RPI_Host $RPI_TemplateDir $RPI_ExtraDir
