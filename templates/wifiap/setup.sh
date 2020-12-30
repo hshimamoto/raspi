@@ -22,8 +22,26 @@ export DEBIAN_FRONTEND=noninteractive
 systemctl disable wpa_supplicant.service
 
 apt-get install -y hostapd dnsmasq iptables-persistent
+
+if [ "$WIFIAP_HW_MODE" == "" ]; then
+	echo "Use default hw_mode g"
+	WIFIAP_HW_MODE=g
+fi
+case "$WIFIAP_HW_MODE" in
+a)
+	DEF_WIFIAP_CHANNEL=36
+	;;
+g)
+	DEF_WIFIAP_CHANNEL=1
+	;;
+esac
+if [ "$WIFIAP_CHANNEL" == "" ]; then
+	WIFIAP_CHANNEL=$DEF_WIFIAP_CHANNEL
+fi
 sed -e "s/WIFIAP_SSID/$WIFIAP_SSID/" \
-	-e "s/WIFIAP_PASS/$WIFIAP_PASS" \
+	-e "s/WIFIAP_PASS/$WIFIAP_PASS/" \
+	-e "s/WIFIAP_HW_MODE/$WIFIAP_HW_MODE/" \
+	-e "s/WIFIAP_CHANNEL/$WIFIAP_CHANNEL/" \
 	/template/hostapd.conf > /etc/hostapd/hostapd.conf
 
 systemctl unmask hostapd
