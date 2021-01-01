@@ -56,6 +56,7 @@ if [ -n "$RPI_ExtraConfig" ]; then
 fi
 cat <<_EOF_ >> $RPI_Config
 NAME=$RPI_Host
+Template=$RPI_Template
 _EOF_
 function cleanup {
 	echo cleanup
@@ -71,6 +72,13 @@ fi
 # precheck
 if [ -x $RPI_TemplateDir/precheck.sh ]; then
 	$RPI_TemplateDir/precheck.sh $RPI_Config
+	if [ $? -ne 0 ]; then
+		echo "precheck failed"
+		exit 1
+	fi
+fi
+if [ -x $RPI_ExtraDir/precheck.sh ]; then
+	$RPI_ExtraDir/precheck.sh $RPI_Config
 	if [ $? -ne 0 ]; then
 		echo "precheck failed"
 		exit 1
