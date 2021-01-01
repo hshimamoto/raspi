@@ -1,6 +1,6 @@
 .*
 !.gitignore
-/mnt/*
+/mnt*
 *.img
 *.gz
 *.xz

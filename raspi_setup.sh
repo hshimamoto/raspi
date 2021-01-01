@@ -9,7 +9,7 @@ EXTRA=$4
 if [ "$EXTRA" == "" ]; then
 	EXTRA=/dev/null
 fi
-MOUNTPOINT=mnt
+MOUNTPOINT=mnt.$$
 
 LOOP=$(losetup -Pf ${IMG} --show)
 trap cleanup EXIT
@@ -21,12 +21,14 @@ function cleanup {
 	cleanup1
 }
 
+mkdir -p $MOUNTPOINT
 mount ${LOOP}p2 $MOUNTPOINT/
 mount ${LOOP}p1 $MOUNTPOINT/boot
 function cleanup2 {
 	echo 'cleanup 2'
 	umount $MOUNTPOINT/boot
 	umount $MOUNTPOINT
+	rmdir $MOUNTPOINT
 }
 function cleanup {
 	cleanup2
