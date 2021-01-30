@@ -19,6 +19,7 @@ export DEBIAN_FRONTEND=noninteractive
 /common/12_hdmi.sh
 /common/13_wifi.sh
 /common/14_remove_wizard.sh
+/common/15_timezone.sh
 /common/20_wpa_supplicant.sh
 
 /common/99_cleanup.sh

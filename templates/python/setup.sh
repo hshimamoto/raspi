@@ -19,6 +19,7 @@ export DEBIAN_FRONTEND=noninteractive
 /common/12_hdmi.sh
 /common/13_wifi.sh
 /common/14_remove_wizard.sh
+/common/15_timezone.sh
 
 # install python
 /common/30_pkg_install.sh python3 python3-pip
