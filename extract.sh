@@ -31,9 +31,9 @@ case "$RPI_Extra" in
 esac
 
 if [ "$RPI_Arch" == "armhf" ]; then
-	RPIOS=2021-01-11-raspios-buster-$RPI_Arch$RPI_Base
+	RPIOS=2021-05-07-raspios-buster-$RPI_Arch$RPI_Base
 else
-	RPIOS=2020-08-20-raspios-buster-$RPI_Arch$RPI_Base
+	RPIOS=2021-05-07-raspios-buster-$RPI_Arch$RPI_Base
 fi
 RPIOS_ZIP=images/$RPIOS.zip
 RPIOS_IMG=$RPIOS.img
