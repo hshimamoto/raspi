@@ -11,7 +11,8 @@ $ sudo apt-get -y install qemu qemu-user-static binfmt-support
 
 ### Download RasPiOS images
 ```
-2020-08-20-raspios-buster-armhf-lite.zip
+2022-04-04-raspios-bullseye-arm64-lite.img.xz
+2022-04-04-raspios-bullseye-arm64.img.xz
 ```
 
 How to use
