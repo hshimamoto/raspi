@@ -27,6 +27,7 @@ case "$RPI_Arch" in
 		exit 1
 esac
 
+RPI_Suite=bullseye
 RPI_Base=-lite
 RPI_CacheOpt=
 case "$RPI_ExtraConfig" in
@@ -86,29 +87,15 @@ if [ -x $RPI_ExtraDir/precheck.sh ]; then
 fi
 
 if [ "$RPI_Arch" == "armhf" ]; then
-	RPIOS=2020-12-02-raspios-buster-$RPI_Arch$RPI_Base
+	echo "not supported yet"
 else
-	RPIOS=2020-08-20-raspios-buster-$RPI_Arch$RPI_Base
+	RPIOS=2022-04-04-raspios-$RPI_Suite-$RPI_Arch$RPI_Base.img.xz
 fi
 
 echo "START $(date)"
 
-# is there any cache?
-
-if [ ! -d caches ]; then mkdir caches; fi
-CACHE_IMG=`ls caches/*-raspios-buster-$RPI_Arch$RPI_Base.img | sort | tail -n 1`
-if [ "$CACHE_IMG" == "" ]; then
-	echo "Generate cache"
-	./cache.sh $RPI_Arch $RPI_CacheOpt
-fi
-CACHE_IMG=`ls caches/*-raspios-buster-$RPI_Arch$RPI_Base.img | sort | tail -n 1`
-if [ "$CACHE_IMG" == "" ]; then
-	echo "No cache image found"
-	exit 1
-fi
-
-RPI_Image=$RPI_Stamp-$RPI_Host-raspios-buster-$RPI_Arch$RPI_Base-$RPI_Template.img
-cp $CACHE_IMG $RPI_Image
+RPI_Image=$RPI_Stamp-$RPI_Host-raspios-$RPI_Suite-$RPI_Arch$RPI_Base-$RPI_Template.img
+xzcat images/$RPIOS > $RPI_Image
 
 if [ -e $RPI_TemplateDir/imagesize ]; then
 	imagesize=$(cat $RPI_TemplateDir/imagesize)
