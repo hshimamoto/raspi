@@ -27,4 +27,4 @@ https://gist.github.com/cinderblock/20952a653989e55f8a7770a0ca2348a8
 
 License
 -------
-MIT License Copyright(c) 2020, 2021 Hiroshi Shimamoto
+MIT License Copyright(c) 2020, 2021, 2022 Hiroshi Shimamoto
