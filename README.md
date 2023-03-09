@@ -11,8 +11,8 @@ $ sudo apt-get -y install qemu qemu-user-static binfmt-support
 
 ### Download RasPiOS images
 ```
-2022-04-04-raspios-bullseye-arm64-lite.img.xz
-2022-04-04-raspios-bullseye-arm64.img.xz
+2023-02-21-raspios-bullseye-arm64-lite.img.xz
+2023-02-21-raspios-bullseye-arm64.img.xz
 ```
 
 How to use
@@ -28,4 +28,4 @@ https://gist.github.com/cinderblock/20952a653989e55f8a7770a0ca2348a8
 
 License
 -------
-MIT License Copyright(c) 2020, 2021, 2022 Hiroshi Shimamoto
+MIT License Copyright(c) 2020, 2021, 2022, 2023 Hiroshi Shimamoto

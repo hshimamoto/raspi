@@ -89,7 +89,7 @@ fi
 if [ "$RPI_Arch" == "armhf" ]; then
 	echo "not supported yet"
 else
-	RPIOS=2022-04-04-raspios-$RPI_Suite-$RPI_Arch$RPI_Base.img.xz
+	RPIOS=2023-02-21-raspios-$RPI_Suite-$RPI_Arch$RPI_Base.img.xz
 fi
 
 echo "START $(date)"
